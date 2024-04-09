@@ -23,3 +23,5 @@ Hay un bug, al borrarse el ultimo, no se actualiza el total, es probable dado qu
 De momento no se puede editar.
 
 ## Ejercicio 3 - Arrays
+
+Poco que añadir aquí, despues del parto del ejercicio 2. Este ha sido mas claro.
