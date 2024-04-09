@@ -15,12 +15,10 @@ class ExpenseService {
 
   _commit(expenses) {
     this.onExpenseListChanged(expenses);
-    // localStorage.setItem("transactions", JSON.stringify(expenses));
+    localStorage.setItem("transactions", JSON.stringify(expenses));
   }
 
   addExpense(text, amount) {
-    console.log("service: addExpense: ", text, amount);
-
     const expense3 = new Expense({
       text: text,
       amount: amount,
@@ -43,10 +41,8 @@ class ExpenseService {
     this._commit(this.expenses);
   }
 
-  removeExpense(id) {
-    console.log("Expense to be removed: ", id);
-    console.log(this.expenses);
-    this.expenses = this.expenses.filter((expense) => expense.id !== id);
+  deleteExpense(_id) {
+    this.expenses = this.expenses.filter(({ id }) => id !== _id);
     this._commit(this.expenses);
   }
 }

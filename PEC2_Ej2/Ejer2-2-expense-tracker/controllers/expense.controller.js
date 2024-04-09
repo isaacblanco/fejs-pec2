@@ -15,7 +15,7 @@ class ExpenseController {
     this.service.bindExpenseListChanged(this.onExpenseListChanged);
     this.view.bindAddExpense(this.handleAddExpense);
     this.view.bindEditExpense(this.handleEditExpense);
-    this.view.bindRemoveExpense(this.handleRemoveExpense);
+    this.view.bindDeleteExpense(this.handleDeleteExpense);
 
     // Display initial expenses
     this.onExpenseListChanged(this.service.expenses);
@@ -34,7 +34,7 @@ class ExpenseController {
     this.service.editExpense(id, text, amount);
   };
 
-  handleRemoveExpense = (id) => {
-    this.service.removeExpense(id);
+  handleDeleteExpense = (id) => {
+    this.service.deleteExpense(id);
   };
 }

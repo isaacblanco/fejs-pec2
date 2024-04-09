@@ -92,7 +92,8 @@ class ExpenseView {
     this.app.append(this.title, this.container); //
 
     // Continue with other elements
-    this._temporaryExpenseText = "";
+    this._temporaryExpenseConceptText = "";
+    this._temporaryExpenseAmountText = "";
     this._initLocalListeners();
   }
 
@@ -105,6 +106,7 @@ class ExpenseView {
   }
 
   _resetInput() {
+    console.log("entra _resetInput");
     this.textField.value = "";
     this.amountField.value = "";
   }
@@ -121,9 +123,6 @@ class ExpenseView {
   x;
 
   displayExpenses(expenses) {
-    let totalIncome = 0;
-    let totalExpenses = 0;
-
     // Logic to display the expenses in the list
     while (this.expensesList.firstChild) {
       this.expensesList.removeChild(this.expensesList.firstChild);
@@ -138,53 +137,51 @@ class ExpenseView {
       expenses.forEach((expense) => {
         const li = this.createElement("li");
         // Usando data-id para evitar posibles conflictos con otros elementos del DOM
-        li.setAttribute("data-id", expense.id);
+        li.id = expense.id;
 
         const span = this.createElement("span");
         span.contentEditable = true;
         span.classList.add("editable");
-        // legibi
-        span.textContent = `Concept: ${expense.text} Amount: $${Math.abs(
-          expense.amount
-        )} `;
+        // legibilidad
+        span.textContent = `${expense.text} $${Math.abs(expense.amount)} `;
 
         const deleteButton = this.createElement("button", "delete");
         deleteButton.textContent = "Delete";
         li.append(span, deleteButton);
 
         this.expensesList.append(li);
-
-        console.log("Expense: ", expense);
-
-        // Actualizar totales de ingresos y gastos
-        if (expense.amount > 0) {
-          totalIncome += Math.abs(expense.amount); // Si no, da guerra
-        } else {
-          totalExpenses += Math.abs(expense.amount); // si no, da guerra
-        }
       });
 
-      // Calcula el balance general
-      let totalBalance = totalIncome - totalExpenses;
-
-      // Actualiza los elementos del DOM con los totales calculados
-      console.log(
-        `Income: $${totalIncome.toFixed(
-          2
-        )}, Expenses: -$${totalExpenses.toFixed(2)}`
-      );
-
-      console.log(totalBalance, totalIncome, totalExpenses);
-      this.balance.textContent = `$${totalBalance.toFixed(2)}`;
-      this.incomeAmount.textContent = `+$${totalIncome.toFixed(2)}`;
-      this.expenseAmount.textContent = `-$${totalExpenses.toFixed(2)}`;
+      this.calculateBalance(expenses);
     }
+  }
+
+  calculateBalance(expenses) {
+    let totalBalance = 0;
+    let totalIncome = 0;
+    let totalExpenses = 0;
+
+    expenses.forEach((expense) => {
+      // Actualizar totales de ingresos y gastos
+      if (expense.amount > 0) {
+        totalIncome += Math.abs(expense.amount); // Si no, da guerra
+      } else {
+        totalExpenses += Math.abs(expense.amount); // si no, da guerra
+      }
+    });
+
+    // Calcula el balance general
+    totalBalance = totalIncome - totalExpenses;
+    // Actualiza los elementos del DOM con los totales calculados
+    this.balance.textContent = `$${totalBalance.toFixed(2)}`;
+    this.incomeAmount.textContent = `+$${totalIncome.toFixed(2)}`;
+    this.expenseAmount.textContent = `-$${totalExpenses.toFixed(2)}`;
   }
 
   _initLocalListeners() {
     this.expensesList.addEventListener("input", (event) => {
       if (event.target.className === "editable") {
-        this._temporaryExpenseText = event.target.innerText;
+        this._temporaryExpenseConceptText = event.target.innerText;
       }
     });
   }
@@ -192,12 +189,6 @@ class ExpenseView {
   bindAddExpense(handler) {
     this.form.addEventListener("submit", (event) => {
       event.preventDefault();
-
-      console.log(
-        "bingAddExpense: ",
-        this.textInput.value,
-        this.amountInput.vale
-      );
 
       const text = this.textInput.value.trim();
       const amount = this.amountInput.value.trim();
@@ -208,11 +199,10 @@ class ExpenseView {
     });
   }
 
-  bindRemoveExpense(handler) {
+  bindDeleteExpense(handler) {
     // Logic to bind remove button click event
     this.expensesList.addEventListener("click", (event) => {
       if (event.target.className === "delete") {
-        console.log(event.target.parentElement.id);
         const id = event.target.parentElement.id;
         handler(id);
       }
@@ -221,11 +211,11 @@ class ExpenseView {
 
   bindEditExpense(handler) {
     this.expensesList.addEventListener("focusout", (event) => {
-      if (this._temporaryExpenseText) {
+      if (this._temporaryExpenseConceptText) {
         const id = event.target.parentElement.id;
 
-        handler(id, this._temporaryExpenseText);
-        this._temporaryExpenseText = "";
+        handler(id, this._temporaryExpenseConceptText);
+        this._temporaryExpenseConceptText = "";
       }
     });
   }
