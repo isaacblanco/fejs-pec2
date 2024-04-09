@@ -4,11 +4,12 @@
  * Manages the data of the application.
  */
 
-class Todo {
-  constructor({ text, complete } = { complete: false }) {
+class Expense {
+  constructor({ text, amount } = { text: "", amount: 0 }) {
+    console.log("Expense constructor ", text, amount);
     this.id = this.uuidv4();
     this.text = text;
-    this.complete = complete;
+    this.amount = parseFloat(amount);
   }
 
   uuidv4() {

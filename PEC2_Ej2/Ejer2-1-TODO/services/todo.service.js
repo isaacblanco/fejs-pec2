@@ -6,7 +6,7 @@
 class TodoService {
   constructor() {
     this.todos = (JSON.parse(localStorage.getItem("todos")) || []).map(
-      todo => new Todo(todo)
+      (todo) => new Todo(todo)
     );
   }
 
@@ -26,11 +26,11 @@ class TodoService {
   }
 
   editTodo(id, updatedText) {
-    this.todos = this.todos.map(todo =>
+    this.todos = this.todos.map((todo) =>
       todo.id === id
         ? new Todo({
             ...todo,
-            text: updatedText
+            text: updatedText,
           })
         : todo
     );
@@ -45,7 +45,7 @@ class TodoService {
   }
 
   toggleTodo(_id) {
-    this.todos = this.todos.map(todo =>
+    this.todos = this.todos.map((todo) =>
       todo.id === _id ? new Todo({ ...todo, complete: !todo.complete }) : todo
     );
 
